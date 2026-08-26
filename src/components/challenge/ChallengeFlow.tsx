@@ -225,7 +225,7 @@ export default function ChallengeFlow({ mode, practiceFilter }: ChallengeFlowPro
         {mode === 'trial' && (
           <p className="text-xs text-amber-400">{trialRemaining} of {MAX_TRIAL_RUNS} trial run(s) remaining</p>
         )}
-        <PrimaryButton onClick={handleDraw} disabled={mode === 'trial' && trialRemaining <= 0} className="px-10 py-5 text-xl">
+        <PrimaryButton onClick={handleDraw} disabled={mode === 'trial' && trialRemaining <= 0} className="buzzer-btn px-12 py-6 text-2xl">
           {mode === 'daily' ? "DRAW TODAY'S TOPIC" : mode === 'trial' ? 'DRAW A TRIAL TOPIC' : 'DRAW A TOPIC'}
         </PrimaryButton>
       </div>

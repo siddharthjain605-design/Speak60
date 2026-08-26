@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useCountdownTimer } from '../../hooks/useCountdownTimer';
 import { SecondaryButton } from '../ui';
+import ScoreboardTime from '../effects/ScoreboardTime';
 import type { Topic } from '../../types';
 
 const PREP_SECONDS = 10 * 60;
@@ -40,13 +41,11 @@ export default function PrepStep({
         <h1 className="mt-1 text-xl font-semibold text-white sm:text-2xl">"{topic.text}"</h1>
       </div>
 
-      <div className="flex flex-col items-center gap-3">
-        <div className={`font-mono-num text-6xl font-extrabold tabular-nums sm:text-7xl ${urgent ? 'text-rose-400' : 'text-violet-300'}`}>
-          {display}
-        </div>
-        <div className="h-1.5 w-full max-w-md overflow-hidden rounded-full bg-zinc-800">
+      <div className="stage flex flex-col items-center gap-4 rounded-3xl px-6 py-8">
+        <ScoreboardTime display={display} urgent={urgent} size="xl" />
+        <div className="h-1.5 w-full max-w-md overflow-hidden rounded-full bg-black/40">
           <div
-            className={`h-full rounded-full ${urgent ? 'bg-rose-500' : 'bg-violet-500'}`}
+            className={`h-full rounded-full ${urgent ? 'bg-rose-500' : 'bg-gradient-to-r from-[var(--gold)] to-[var(--gold-bright)]'}`}
             style={{ width: `${progress * 100}%`, transition: 'width 1s linear' }}
           />
         </div>

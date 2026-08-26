@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useSpeechRecognition } from '../../hooks/useSpeechRecognition';
 import { playGo, playCountdownTick, playUrgentBeep, playChime } from '../../lib/sound';
 import { PrimaryButton, SecondaryButton } from '../ui';
+import ScoreboardTime from '../effects/ScoreboardTime';
 import type { Topic, TranscriptSegment } from '../../types';
 
 const BASE_SECONDS = 60;
@@ -159,7 +160,7 @@ export default function SpeakStep({
 
       {phase === 'ready' && (
         <div className="flex flex-col items-center gap-4">
-          <PrimaryButton onClick={requestMicAndCountdown} className="px-10 py-6 text-2xl">
+          <PrimaryButton onClick={requestMicAndCountdown} className="buzzer-btn px-12 py-7 text-2xl">
             🎙 START SPEAKING
           </PrimaryButton>
           {!speech.supported && (
@@ -173,31 +174,31 @@ export default function SpeakStep({
       )}
 
       {phase === 'countdown' && (
-        <div className="font-mono-num animate-pulse-glow rounded-full text-8xl font-extrabold text-violet-300">{countdownNum}</div>
+        <div className="stage flex h-40 w-40 items-center justify-center rounded-full">
+          <div className="font-display animate-jackpot-pop text-8xl font-extrabold text-gold">{countdownNum}</div>
+        </div>
       )}
 
       {phase === 'recording' && !awaitingExtend && (
-        <div className="flex flex-col items-center gap-4">
+        <div className="stage flex flex-col items-center gap-4 rounded-3xl px-8 py-8">
           <div className="flex items-center gap-2 text-rose-400">
             <span className="h-3 w-3 animate-pulse rounded-full bg-rose-500" />
             <span className="text-sm font-semibold uppercase tracking-wide">Recording</span>
           </div>
-          <div className={`font-mono-num text-7xl font-extrabold tabular-nums sm:text-8xl ${urgent ? 'text-rose-400' : 'text-white'}`}>
-            {display}
-          </div>
+          <ScoreboardTime display={display} urgent={urgent} size="xl" />
           <p className="text-xs text-zinc-500">Speak naturally.</p>
           <SecondaryButton onClick={() => finishRef.current()}>Finish Speech Now</SecondaryButton>
         </div>
       )}
 
       {phase === 'recording' && awaitingExtend && (
-        <div className="flex flex-col items-center gap-4 rounded-2xl border border-violet-500/30 bg-violet-500/10 px-6 py-8">
-          <div className="text-lg font-bold text-white">Time's up — want to keep going?</div>
+        <div className="stage flex flex-col items-center gap-4 rounded-3xl border border-[var(--gold-deep)]/50 px-6 py-8">
+          <div className="font-display text-lg font-bold text-gold">Time's up — want to keep going?</div>
           <p className="max-w-sm text-sm text-zinc-400">
             You can extend by another minute (up to {formatTime(maxSpeakSeconds)} total) or finish here.
           </p>
           <div className="flex gap-3">
-            <PrimaryButton onClick={handleExtend} disabled={remainingAllowance <= 0}>
+            <PrimaryButton onClick={handleExtend} disabled={remainingAllowance <= 0} className="buzzer-btn">
               +1 Minute
             </PrimaryButton>
             <SecondaryButton onClick={() => finishRef.current()}>I'm Done</SecondaryButton>

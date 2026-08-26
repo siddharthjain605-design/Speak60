@@ -11,6 +11,28 @@ function getCtx(): AudioContext {
   return sharedCtx;
 }
 
+function noiseBurst(startOffset: number, duration: number, gainPeak: number, filterFreq: number) {
+  const ctx = getCtx();
+  const bufferSize = Math.ceil(ctx.sampleRate * duration);
+  const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+  const source = ctx.createBufferSource();
+  source.buffer = buffer;
+  const filter = ctx.createBiquadFilter();
+  filter.type = 'bandpass';
+  filter.frequency.value = filterFreq;
+  const gain = ctx.createGain();
+  const t0 = ctx.currentTime + startOffset;
+  gain.gain.setValueAtTime(gainPeak, t0);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t0 + duration);
+  source.connect(filter);
+  filter.connect(gain);
+  gain.connect(ctx.destination);
+  source.start(t0);
+  source.stop(t0 + duration + 0.02);
+}
+
 function tone(freq: number, startOffset: number, duration: number, type: OscillatorType, gainPeak: number) {
   const ctx = getCtx();
   const osc = ctx.createOscillator();
@@ -111,4 +133,24 @@ export function playBadgeUnlock() {
 /** Very short, quiet tick used for animated number count-ups. */
 export function playScoreTick() {
   tone(700, 0, 0.02, 'square', 0.03);
+}
+
+/** KBC/game-show style drumroll — accelerating low hits, call before a big reveal. */
+export function playDrumroll(durationMs: number): void {
+  getCtx();
+  const totalSec = durationMs / 1000;
+  let t = 0;
+  let interval = 0.14;
+  while (t < totalSec) {
+    noiseBurst(t, 0.05, 0.12, 180);
+    t += interval;
+    interval = Math.max(0.04, interval * 0.93);
+  }
+}
+
+/** Big cymbal-crash + horn stab for the theatrical reveal moment. */
+export function playCrashSting(): void {
+  noiseBurst(0, 0.9, 0.16, 6000);
+  [261.6, 329.6, 392, 523.25].forEach((f, i) => tone(f, 0.02, 0.7, 'sawtooth', 0.1 - i * 0.01));
+  tone(1046.5, 0.05, 0.5, 'sine', 0.1);
 }
