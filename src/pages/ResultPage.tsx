@@ -1,15 +1,19 @@
-import { useNavigate, useParams, Link } from 'react-router-dom';
+import { useNavigate, useParams, useLocation, Link } from 'react-router-dom';
 import { useStore } from '../store';
 import { useAuthStore } from '../authStore';
 import AttemptResult from '../components/result/AttemptResult';
+import BadgeCelebration from '../components/result/BadgeCelebration';
+import type { Badge } from '../types';
 
 export default function ResultPage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const attempt = useStore((s) => s.attempts.find((a) => a.id === id));
   const attempts = useStore((s) => s.attempts);
   const deleteAttempt = useStore((s) => s.deleteAttempt);
   const customFillerWords = useAuthStore((s) => s.profile?.custom_filler_words ?? []);
+  const newBadges = (location.state as { newBadges?: Badge[] } | null)?.newBadges ?? [];
 
   if (!attempt) {
     return (
@@ -21,15 +25,18 @@ export default function ResultPage() {
   }
 
   return (
-    <AttemptResult
-      attempt={attempt}
-      customFillerWords={customFillerWords}
-      dailyAttemptsForComparison={attempts}
-      onDeleteAttempt={async () => {
-        const error = await deleteAttempt(attempt.id);
-        if (!error) navigate('/calendar');
-        return error;
-      }}
-    />
+    <div className="flex flex-col gap-5">
+      <BadgeCelebration badges={newBadges} />
+      <AttemptResult
+        attempt={attempt}
+        customFillerWords={customFillerWords}
+        dailyAttemptsForComparison={attempts}
+        onDeleteAttempt={async () => {
+          const error = await deleteAttempt(attempt.id);
+          if (!error) navigate('/calendar');
+          return error;
+        }}
+      />
+    </div>
   );
 }

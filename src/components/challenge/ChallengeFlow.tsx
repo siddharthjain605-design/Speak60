@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useStore } from '../../store';
 import { useAuthStore } from '../../authStore';
 import { drawTopic, getAllTopics, type DrawOptions } from '../../lib/topicEngine';
-import { todayISO, saveAudioBlob, getChallengeDayNumber } from '../../lib/storage';
+import { todayISO, saveAudioBlob, getChallengeDayNumber, getDailyAttempts } from '../../lib/storage';
 import { analyzeAudioBlob } from '../../lib/audioAnalysis';
 import { analyzeTranscript } from '../../lib/speechAnalysis';
 import { computeScores } from '../../lib/scoringEngine';
@@ -20,6 +20,8 @@ import { PrimaryButton } from '../ui';
 type Step = 'draw' | 'spin' | 'notice' | 'prep' | 'speak' | 'processing';
 
 export const MAX_TRIAL_RUNS = 3;
+const SPEAK_SECONDS_BEFORE_GRADUATION = 180; // 3 minutes, during the first 30 days
+const SPEAK_SECONDS_AFTER_GRADUATION = 600; // 10 minutes, once the 30-day challenge is complete
 
 interface ChallengeFlowProps {
   mode: 'daily' | 'practice' | 'trial';
@@ -40,6 +42,9 @@ export default function ChallengeFlow({ mode, practiceFilter }: ChallengeFlowPro
   const [topic, setTopic] = useState<Topic | null>(null);
 
   const allTopics = useMemo(() => getAllTopics(store), [store]);
+  const maxSpeakSeconds = getDailyAttempts(store.attempts).length >= 30
+    ? SPEAK_SECONDS_AFTER_GRADUATION
+    : SPEAK_SECONDS_BEFORE_GRADUATION;
 
   useEffect(() => {
     if (mode !== 'daily') return;
@@ -202,7 +207,7 @@ export default function ChallengeFlow({ mode, practiceFilter }: ChallengeFlowPro
     store.saveAttempt(completed);
     const badges = evaluateNewBadges(store, completed);
     store.addBadges(badges);
-    navigate(`/result/${completed.id}`);
+    navigate(`/result/${completed.id}`, { state: { newBadges: badges } });
   }
 
   if (step === 'draw') {
@@ -246,8 +251,15 @@ export default function ChallengeFlow({ mode, practiceFilter }: ChallengeFlowPro
     );
   }
 
-  if (step === 'speak' && topic) {
-    return <SpeakStep topic={topic} onComplete={handleSpeakComplete} />;
+  if (step === 'speak' && topic && attempt) {
+    return (
+      <SpeakStep
+        topic={topic}
+        scratchpad={attempt.scratchpad}
+        maxSpeakSeconds={maxSpeakSeconds}
+        onComplete={handleSpeakComplete}
+      />
+    );
   }
 
   if (step === 'processing') {

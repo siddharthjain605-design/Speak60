@@ -2,7 +2,10 @@ import type { ReactNode } from 'react';
 
 export function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
   return (
-    <div className={`rounded-2xl border border-zinc-800 bg-zinc-900/60 p-5 shadow-xl shadow-black/20 ${className}`}>
+    <div
+      className={`rounded-2xl border border-zinc-800/90 bg-zinc-900/60 p-5 shadow-xl shadow-black/30 backdrop-blur-sm ${className}`}
+      style={{ boxShadow: 'inset 0 1px 0 0 rgba(255,255,255,0.04), 0 20px 40px -20px rgba(0,0,0,0.6)' }}
+    >
       {children}
     </div>
   );
@@ -11,7 +14,7 @@ export function Card({ children, className = '' }: { children: ReactNode; classN
 export function SectionTitle({ children, sub }: { children: ReactNode; sub?: string }) {
   return (
     <div className="mb-3">
-      <h2 className="text-sm font-semibold uppercase tracking-wide text-zinc-400">{children}</h2>
+      <h2 className="font-display text-sm font-semibold uppercase tracking-wide text-zinc-400">{children}</h2>
       {sub && <p className="mt-0.5 text-xs text-zinc-500">{sub}</p>}
     </div>
   );
@@ -91,7 +94,7 @@ export function PrimaryButton({ children, onClick, disabled, className = '', typ
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={`rounded-xl bg-violet-600 px-5 py-3 font-semibold text-white shadow-lg shadow-violet-900/30 transition hover:bg-violet-500 disabled:cursor-not-allowed disabled:opacity-40 ${className}`}
+      className={`font-display rounded-xl bg-gradient-to-b from-violet-500 to-violet-600 px-5 py-3 font-semibold text-white shadow-lg shadow-violet-900/40 transition-all duration-150 hover:-translate-y-0.5 hover:from-violet-400 hover:to-violet-500 hover:shadow-violet-800/50 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0 ${className}`}
     >
       {children}
     </button>
@@ -104,7 +107,7 @@ export function SecondaryButton({ children, onClick, disabled, className = '' }:
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`rounded-xl border border-zinc-700 bg-zinc-900 px-5 py-3 font-medium text-zinc-200 transition hover:border-zinc-600 hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-40 ${className}`}
+      className={`rounded-xl border border-zinc-700 bg-zinc-900 px-5 py-3 font-medium text-zinc-200 transition-all duration-150 hover:-translate-y-0.5 hover:border-zinc-600 hover:bg-zinc-800 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0 ${className}`}
     >
       {children}
     </button>

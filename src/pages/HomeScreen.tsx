@@ -106,15 +106,35 @@ function HeaderStats({ currentDay, streak, latestScore, day1Score, bestScore, im
   currentDay: number; streak: number; latestScore: number | null; day1Score: number | null; bestScore: number; improvementPct: number | null;
 }) {
   const displayName = useAuthStore((s) => s.profile?.display_name ?? 'Speaker');
+  const dayProgressPct = Math.min(100, Math.max(0, ((currentDay - 1) / 30) * 100));
   return (
     <div className="text-center">
-      <div className="text-3xl font-bold text-white">Speak<span className="text-violet-400">60</span></div>
-      <div className="mt-1 text-sm text-zinc-500">Think. Structure. Speak. — {displayName}</div>
-      <div className="mt-4 flex flex-wrap items-center justify-center gap-3 text-sm">
-        <span className="rounded-full bg-zinc-800 px-3 py-1 text-zinc-300">Day {currentDay} of 30</span>
-        {streak > 0 && <span className="rounded-full bg-amber-500/15 px-3 py-1 text-amber-300">🔥 {streak}-Day Streak</span>}
-        <span className="text-xs text-zinc-600">{todayISO()}</span>
+      <div className="font-display text-3xl font-bold text-white">
+        Speak<span className="bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">60</span>
       </div>
+      <div className="mt-1 text-sm text-zinc-500">Think. Structure. Speak. — {displayName}</div>
+
+      <div className="mx-auto mt-5 flex max-w-xs items-center gap-3">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-2 border-violet-500/50 bg-violet-500/10 font-display text-sm font-bold text-violet-300">
+          {currentDay}
+        </div>
+        <div className="flex-1 text-left">
+          <div className="h-2 w-full overflow-hidden rounded-full bg-zinc-800">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-400 transition-all duration-700"
+              style={{ width: `${dayProgressPct}%` }}
+            />
+          </div>
+          <div className="mt-1 text-[11px] text-zinc-500">Day {currentDay} of 30</div>
+        </div>
+        {streak > 0 && (
+          <span className="flex shrink-0 items-center gap-1 rounded-full bg-amber-500/15 px-2.5 py-1 text-xs font-semibold text-amber-300">
+            🔥 {streak}
+          </span>
+        )}
+      </div>
+      <div className="mt-2 text-xs text-zinc-600">{todayISO()}</div>
+
       {latestScore !== null && (
         <div className="mx-auto mt-6 grid max-w-2xl grid-cols-2 gap-3 sm:grid-cols-4">
           <StatTile label="Current Score" value={latestScore} tone="accent" />

@@ -17,11 +17,13 @@ export default function Shell() {
   const navItems = isAdmin ? [...NAV_ITEMS, { to: '/family', label: 'Family' }] : NAV_ITEMS;
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100">
-      <header className="sticky top-0 z-40 border-b border-zinc-800/80 bg-zinc-950/90 backdrop-blur">
+    <div className="min-h-screen text-zinc-100">
+      <header className="sticky top-0 z-40 border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
           <NavLink to="/" className="flex items-baseline gap-2">
-            <span className="text-xl font-semibold tracking-tight text-white">Speak<span className="text-violet-400">60</span></span>
+            <span className="font-display text-xl font-bold tracking-tight text-white">
+              Speak<span className="bg-gradient-to-r from-violet-400 to-fuchsia-400 bg-clip-text text-transparent">60</span>
+            </span>
             <span className="hidden text-xs text-zinc-500 sm:inline">Think. Structure. Speak.</span>
           </NavLink>
           <nav className="flex items-center gap-1 overflow-x-auto text-sm">
