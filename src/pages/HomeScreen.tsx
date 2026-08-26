@@ -1,10 +1,11 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useStore } from '../store';
 import { useAuthStore } from '../authStore';
 import { getChallengeDayNumber, getDailyAttempts, getTodaysDailyAttempt, todayISO } from '../lib/storage';
 import { currentStreak } from '../lib/badges';
-import ChallengeFlow from '../components/challenge/ChallengeFlow';
-import { Card, PrimaryButton, StatTile } from '../components/ui';
+import ChallengeFlow, { MAX_TRIAL_RUNS } from '../components/challenge/ChallengeFlow';
+import { Card, PrimaryButton, SecondaryButton, StatTile } from '../components/ui';
 
 function PrivacyBanner() {
   const privacyAcknowledged = useAuthStore((s) => s.profile?.privacy_acknowledged ?? false);
@@ -23,6 +24,24 @@ function PrivacyBanner() {
       >
         Got it
       </button>
+    </Card>
+  );
+}
+
+function TrialNudge() {
+  const trialRunsUsed = useAuthStore((s) => s.profile?.trial_runs_used ?? 0);
+  const [dismissed, setDismissed] = useState(false);
+  if (dismissed || trialRunsUsed >= MAX_TRIAL_RUNS) return null;
+  return (
+    <Card className="border-amber-500/30 bg-amber-500/5 text-center">
+      <p className="text-sm text-zinc-200">
+        New here? Try a <strong>free trial run</strong> first — the full experience with zero pressure, no
+        effect on your streak or history. You get {MAX_TRIAL_RUNS - trialRunsUsed} of {MAX_TRIAL_RUNS} left.
+      </p>
+      <div className="mt-3 flex justify-center gap-2">
+        <Link to="/trial"><PrimaryButton>Try a Trial Run</PrimaryButton></Link>
+        <SecondaryButton onClick={() => setDismissed(true)}>Skip, start Day 1</SecondaryButton>
+      </div>
     </Card>
   );
 }
@@ -77,6 +96,7 @@ export default function HomeScreen() {
     <div className="flex flex-col gap-8">
       <PrivacyBanner />
       <HeaderStats currentDay={currentDay} streak={streak} latestScore={latestScore} day1Score={day1Score} bestScore={bestScore} improvementPct={improvementPct} />
+      {!challengeStartDate && <TrialNudge />}
       <ChallengeFlow mode="daily" />
     </div>
   );

@@ -9,6 +9,7 @@ export interface Profile {
   challenge_start_date: string | null;
   custom_filler_words: string[];
   privacy_acknowledged: boolean;
+  trial_runs_used: number;
 }
 
 interface AuthStore {
@@ -22,7 +23,7 @@ interface AuthStore {
   sendMagicLink: (email: string) => Promise<void>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
-  updateProfile: (partial: Partial<Pick<Profile, 'display_name' | 'custom_filler_words' | 'privacy_acknowledged' | 'challenge_start_date'>>) => Promise<void>;
+  updateProfile: (partial: Partial<Pick<Profile, 'display_name' | 'custom_filler_words' | 'privacy_acknowledged' | 'challenge_start_date' | 'trial_runs_used'>>) => Promise<void>;
 }
 
 async function fetchProfile(userId: string): Promise<Profile | null> {

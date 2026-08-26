@@ -12,8 +12,12 @@ create table if not exists public.profiles (
   challenge_start_date date,
   custom_filler_words text[] not null default '{}',
   privacy_acknowledged boolean not null default false,
+  trial_runs_used integer not null default 0,
   created_at timestamptz not null default now()
 );
+
+-- Covers installs that ran an earlier version of this schema before trial runs existed.
+alter table public.profiles add column if not exists trial_runs_used integer not null default 0;
 
 alter table public.profiles enable row level security;
 

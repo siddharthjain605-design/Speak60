@@ -178,16 +178,18 @@ export interface FamilyMemberSummary {
   displayName: string;
   challengeStartDate: string | null;
   customFillerWords: string[];
+  trialRunsUsed: number;
 }
 
 export async function fetchAllProfiles(): Promise<FamilyMemberSummary[]> {
-  const { data, error } = await supabase.from('profiles').select('id,display_name,challenge_start_date,custom_filler_words');
+  const { data, error } = await supabase.from('profiles').select('id,display_name,challenge_start_date,custom_filler_words,trial_runs_used');
   if (error || !data) return [];
-  return (data as { id: string; display_name: string; challenge_start_date: string | null; custom_filler_words: string[] }[]).map((p) => ({
+  return (data as { id: string; display_name: string; challenge_start_date: string | null; custom_filler_words: string[]; trial_runs_used: number }[]).map((p) => ({
     id: p.id,
     displayName: p.display_name,
     challengeStartDate: p.challenge_start_date,
     customFillerWords: p.custom_filler_words ?? [],
+    trialRunsUsed: p.trial_runs_used ?? 0,
   }));
 }
 
@@ -200,7 +202,7 @@ export async function fetchAttemptById(id: string): Promise<ChallengeAttempt | n
 /** Admin-only: edit another family member's profile (display name, challenge start date, etc). */
 export async function updateProfileRemote(
   userId: string,
-  partial: { display_name?: string; challenge_start_date?: string | null; custom_filler_words?: string[] },
+  partial: { display_name?: string; challenge_start_date?: string | null; custom_filler_words?: string[]; trial_runs_used?: number },
 ): Promise<string | null> {
   const { error } = await supabase.from('profiles').update(partial).eq('id', userId);
   return error?.message ?? null;

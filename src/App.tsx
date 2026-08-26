@@ -8,6 +8,7 @@ import HomeScreen from './pages/HomeScreen';
 import ProgressPage from './pages/ProgressPage';
 import CalendarPage from './pages/CalendarPage';
 import PracticePage from './pages/PracticePage';
+import TrialRunPage from './pages/TrialRunPage';
 import TopicBankPage from './pages/TopicBankPage';
 import SettingsPage from './pages/SettingsPage';
 import ResultPage from './pages/ResultPage';
@@ -72,6 +73,7 @@ export default function App() {
           <Route path="/progress" element={<ProgressPage />} />
           <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/practice" element={<PracticePage />} />
+          <Route path="/trial" element={<TrialRunPage />} />
           <Route path="/topics" element={<TopicBankPage />} />
           <Route path="/settings" element={<SettingsPage />} />
           <Route path="/result/:id" element={<ResultPage />} />

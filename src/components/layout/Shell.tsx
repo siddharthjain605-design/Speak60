@@ -3,6 +3,7 @@ import { useAuthStore } from '../../authStore';
 
 const NAV_ITEMS = [
   { to: '/', label: 'Today', end: true },
+  { to: '/trial', label: 'Trial Run' },
   { to: '/progress', label: 'Progress' },
   { to: '/calendar', label: 'History' },
   { to: '/practice', label: 'Practice' },

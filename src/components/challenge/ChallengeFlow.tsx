@@ -19,8 +19,10 @@ import { PrimaryButton } from '../ui';
 
 type Step = 'draw' | 'spin' | 'notice' | 'prep' | 'speak' | 'processing';
 
+export const MAX_TRIAL_RUNS = 3;
+
 interface ChallengeFlowProps {
-  mode: 'daily' | 'practice';
+  mode: 'daily' | 'practice' | 'trial';
   practiceFilter?: { category?: string; difficulty?: Difficulty; type?: TopicType };
 }
 
@@ -71,6 +73,12 @@ export default function ChallengeFlow({ mode, practiceFilter }: ChallengeFlowPro
       } else {
         day = getChallengeDayNumber(profile.challenge_start_date, today);
       }
+    }
+
+    if (mode === 'trial') {
+      const used = profile?.trial_runs_used ?? 0;
+      if (used >= MAX_TRIAL_RUNS) return;
+      updateProfile({ trial_runs_used: used + 1 });
     }
 
     const opts: DrawOptions = {};
@@ -198,17 +206,22 @@ export default function ChallengeFlow({ mode, practiceFilter }: ChallengeFlowPro
   }
 
   if (step === 'draw') {
+    const trialRemaining = MAX_TRIAL_RUNS - (profile?.trial_runs_used ?? 0);
     return (
       <div className="mx-auto flex max-w-xl flex-col items-center gap-6 py-16 text-center">
         <h1 className="text-2xl font-bold text-white">
-          {mode === 'daily' ? "Ready for today's challenge?" : 'Draw a practice topic'}
+          {mode === 'daily' ? "Ready for today's challenge?" : mode === 'trial' ? 'Try a trial run' : 'Draw a practice topic'}
         </h1>
         <p className="text-sm text-zinc-500">
           A topic will be drawn at random and locked in{mode === 'daily' ? ' for today' : ''}.
           {mode === 'daily' && ' Refreshing the page will not draw a new one.'}
+          {mode === 'trial' && ' This runs through the full experience — prep timer, recording, and analysis — with zero pressure.'}
         </p>
-        <PrimaryButton onClick={handleDraw} className="px-10 py-5 text-xl">
-          {mode === 'daily' ? "DRAW TODAY'S TOPIC" : 'DRAW A TOPIC'}
+        {mode === 'trial' && (
+          <p className="text-xs text-amber-400">{trialRemaining} of {MAX_TRIAL_RUNS} trial run(s) remaining</p>
+        )}
+        <PrimaryButton onClick={handleDraw} disabled={mode === 'trial' && trialRemaining <= 0} className="px-10 py-5 text-xl">
+          {mode === 'daily' ? "DRAW TODAY'S TOPIC" : mode === 'trial' ? 'DRAW A TRIAL TOPIC' : 'DRAW A TOPIC'}
         </PrimaryButton>
       </div>
     );

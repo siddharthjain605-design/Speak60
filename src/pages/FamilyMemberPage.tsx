@@ -3,9 +3,10 @@ import { Link, useParams } from 'react-router-dom';
 import { useAuthStore } from '../authStore';
 import * as db from '../lib/db';
 import type { Badge, ChallengeAttempt } from '../types';
-import { Card, SecondaryButton, SectionTitle } from '../components/ui';
+import { Card, Pill, SecondaryButton, SectionTitle } from '../components/ui';
 import ProgressContent from '../components/progress/ProgressContent';
 import ChallengeCalendarGrid from '../components/progress/ChallengeCalendarGrid';
+import { MAX_TRIAL_RUNS } from '../components/challenge/ChallengeFlow';
 
 function AdminControls({ member, onUpdated }: { member: db.FamilyMemberSummary; onUpdated: () => void }) {
   const [name, setName] = useState(member.displayName);
@@ -51,6 +52,15 @@ function AdminControls({ member, onUpdated }: { member: db.FamilyMemberSummary; 
               className="flex-1 rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm text-zinc-100"
             />
             <SecondaryButton disabled={saving} onClick={() => save({ challenge_start_date: startDate || null })}>Save</SecondaryButton>
+          </div>
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-zinc-500">Trial runs used</label>
+          <div className="flex items-center gap-2">
+            <Pill tone={member.trialRunsUsed >= MAX_TRIAL_RUNS ? 'bad' : 'default'}>{member.trialRunsUsed} / {MAX_TRIAL_RUNS}</Pill>
+            <SecondaryButton disabled={saving || member.trialRunsUsed === 0} onClick={() => save({ trial_runs_used: 0 })}>
+              Reset to 0
+            </SecondaryButton>
           </div>
         </div>
       </div>
