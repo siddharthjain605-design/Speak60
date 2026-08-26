@@ -1,6 +1,7 @@
+import { useState } from 'react';
 import type { ChallengeAttempt } from '../../types';
 import { getDailyAttempts } from '../../lib/storage';
-import { Pill } from '../ui';
+import { Card, Pill, SecondaryButton } from '../ui';
 import TranscriptView from './TranscriptView';
 import MetricsTable from './MetricsTable';
 import ScoreBreakdownView from './ScoreBreakdownView';
@@ -10,14 +11,18 @@ import AudioPlayback from './AudioPlayback';
 import { DIFFICULTY_LABELS } from '../../lib/topicEngine';
 
 export default function AttemptResult({
-  attempt, customFillerWords, dailyAttemptsForComparison, allowDeleteAudio = true,
+  attempt, customFillerWords, dailyAttemptsForComparison, allowDeleteAudio = true, onDeleteAttempt,
 }: {
   attempt: ChallengeAttempt;
   customFillerWords: string[];
   dailyAttemptsForComparison: ChallengeAttempt[];
   allowDeleteAudio?: boolean;
+  /** When provided, shows a "Delete This Attempt" control that calls this and reports any error. */
+  onDeleteAttempt?: () => Promise<string | null>;
 }) {
   const dailyAttempts = getDailyAttempts(dailyAttemptsForComparison);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   if (attempt.status !== 'completed' || !attempt.scores || !attempt.metrics || !attempt.coach) {
     return <p className="text-zinc-500">This attempt is still in progress.</p>;
@@ -42,6 +47,29 @@ export default function AttemptResult({
       <CoachFeedbackView coach={attempt.coach} />
       {attempt.isDailyChallenge && dailyAttempts.length > 0 && (
         <DailyComparison current={attempt} allDaily={dailyAttempts} />
+      )}
+
+      {onDeleteAttempt && (
+        <Card className="border-rose-500/30">
+          <p className="mb-3 text-sm text-zinc-400">
+            Permanently remove this entire attempt — topic, transcript, scores, and its slot in the calendar.
+            Useful for clearing out trial-run or test data. This cannot be undone.
+          </p>
+          <SecondaryButton
+            className="border-rose-500/50 text-rose-300"
+            disabled={deleting}
+            onClick={async () => {
+              if (!confirm('Permanently delete this attempt? This cannot be undone.')) return;
+              setDeleting(true);
+              const error = await onDeleteAttempt();
+              setDeleting(false);
+              if (error) setDeleteError(error);
+            }}
+          >
+            {deleting ? 'Deleting…' : 'Delete This Attempt'}
+          </SecondaryButton>
+          {deleteError && <p className="mt-2 text-xs text-rose-400">{deleteError}</p>}
+        </Card>
       )}
     </div>
   );

@@ -99,8 +99,9 @@ export async function upsertAttemptRemote(userId: string, attempt: ChallengeAtte
   if (error) console.error('Failed to sync attempt to Supabase:', error.message);
 }
 
-export async function deleteAttemptRemote(attemptId: string): Promise<void> {
-  await supabase.from('attempts').delete().eq('id', attemptId);
+export async function deleteAttemptRemote(attemptId: string): Promise<string | null> {
+  const { error } = await supabase.from('attempts').delete().eq('id', attemptId);
+  return error?.message ?? null;
 }
 
 export async function deleteAllAttemptsForUser(userId: string): Promise<void> {
@@ -194,4 +195,13 @@ export async function fetchAttemptById(id: string): Promise<ChallengeAttempt | n
   const { data, error } = await supabase.from('attempts').select('*').eq('id', id).maybeSingle();
   if (error || !data) return null;
   return rowToAttempt(data as AttemptRow);
+}
+
+/** Admin-only: edit another family member's profile (display name, challenge start date, etc). */
+export async function updateProfileRemote(
+  userId: string,
+  partial: { display_name?: string; challenge_start_date?: string | null; custom_filler_words?: string[] },
+): Promise<string | null> {
+  const { error } = await supabase.from('profiles').update(partial).eq('id', userId);
+  return error?.message ?? null;
 }

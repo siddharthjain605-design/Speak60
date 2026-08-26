@@ -74,7 +74,7 @@ create policy "profiles_select" on public.profiles
 
 drop policy if exists "profiles_update_own" on public.profiles;
 create policy "profiles_update_own" on public.profiles
-  for update using (auth.uid() = id);
+  for update using (auth.uid() = id or public.is_admin_user(auth.uid()));
 
 -- ============================================================
 -- 2. Attempts — every Daily Challenge / Practice recording's data (not audio).
@@ -117,11 +117,11 @@ create policy "attempts_insert" on public.attempts
 
 drop policy if exists "attempts_update" on public.attempts;
 create policy "attempts_update" on public.attempts
-  for update using (auth.uid() = user_id);
+  for update using (auth.uid() = user_id or public.is_admin_user(auth.uid()));
 
 drop policy if exists "attempts_delete" on public.attempts;
 create policy "attempts_delete" on public.attempts
-  for delete using (auth.uid() = user_id);
+  for delete using (auth.uid() = user_id or public.is_admin_user(auth.uid()));
 
 create index if not exists attempts_user_id_idx on public.attempts (user_id);
 

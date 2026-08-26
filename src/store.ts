@@ -13,6 +13,7 @@ interface Store extends DataState {
   addBadges: (badges: Badge[]) => void;
   addCustomTopics: (topics: RawTopic[]) => void;
   deleteAttemptRecording: (attemptId: string) => Promise<void>;
+  deleteAttempt: (attemptId: string) => Promise<string | null>;
   deleteAllData: () => Promise<void>;
 }
 
@@ -94,6 +95,14 @@ export const useStore = create<Store>((set, get) => ({
     const userId = currentUserId();
     const updated = attempts.find((a) => a.id === attemptId);
     if (userId && updated) db.upsertAttemptRemote(userId, updated);
+  },
+
+  deleteAttempt: async (attemptId) => {
+    const error = await db.deleteAttemptRemote(attemptId);
+    if (error) return error;
+    await deleteAudioBlob(attemptId);
+    set({ attempts: get().attempts.filter((a) => a.id !== attemptId) });
+    return null;
   },
 
   deleteAllData: async () => {

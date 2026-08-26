@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useAuthStore } from '../authStore';
 import * as db from '../lib/db';
 import type { ChallengeAttempt } from '../types';
@@ -7,6 +7,7 @@ import AttemptResult from '../components/result/AttemptResult';
 
 export default function FamilyMemberResultPage() {
   const { userId, id } = useParams();
+  const navigate = useNavigate();
   const isAdmin = useAuthStore((s) => s.profile?.is_admin ?? false);
   const [attempt, setAttempt] = useState<ChallengeAttempt | null | undefined>(undefined);
   const [allAttempts, setAllAttempts] = useState<ChallengeAttempt[]>([]);
@@ -47,6 +48,11 @@ export default function FamilyMemberResultPage() {
         customFillerWords={customFillerWords}
         dailyAttemptsForComparison={allAttempts}
         allowDeleteAudio={false}
+        onDeleteAttempt={async () => {
+          const error = await db.deleteAttemptRemote(attempt.id);
+          if (!error) navigate(`/family/${userId}`);
+          return error;
+        }}
       />
     </div>
   );
