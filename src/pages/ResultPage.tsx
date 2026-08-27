@@ -13,6 +13,7 @@ export default function ResultPage() {
   const attempts = useStore((s) => s.attempts);
   const deleteAttempt = useStore((s) => s.deleteAttempt);
   const customFillerWords = useAuthStore((s) => s.profile?.custom_filler_words ?? []);
+  const isAdmin = useAuthStore((s) => s.profile?.is_admin ?? false);
   const newBadges = (location.state as { newBadges?: Badge[] } | null)?.newBadges ?? [];
 
   if (!attempt) {
@@ -31,11 +32,12 @@ export default function ResultPage() {
         attempt={attempt}
         customFillerWords={customFillerWords}
         dailyAttemptsForComparison={attempts}
-        onDeleteAttempt={async () => {
+        allowDeleteAudio={isAdmin}
+        onDeleteAttempt={isAdmin ? async () => {
           const error = await deleteAttempt(attempt.id);
           if (!error) navigate('/calendar');
           return error;
-        }}
+        } : undefined}
       />
     </div>
   );

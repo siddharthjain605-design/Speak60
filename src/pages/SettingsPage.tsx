@@ -17,6 +17,10 @@ export default function SettingsPage() {
 
   const customFillerWords = profile?.custom_filler_words ?? [];
 
+  if (!profile?.is_admin) {
+    return <div className="py-16 text-center text-zinc-500">This page is only visible to the family account administrator.</div>;
+  }
+
   return (
     <div className="mx-auto flex max-w-2xl flex-col gap-5">
       <Card>

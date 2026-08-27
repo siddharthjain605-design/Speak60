@@ -1,20 +1,27 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import { useAuthStore } from '../../authStore';
 
-const NAV_ITEMS = [
+interface NavItem { to: string; label: string; end?: boolean }
+
+const BASE_NAV_ITEMS: NavItem[] = [
   { to: '/', label: 'Today', end: true },
   { to: '/trial', label: 'Trial Run' },
   { to: '/progress', label: 'Progress' },
   { to: '/calendar', label: 'History' },
   { to: '/practice', label: 'Practice' },
+];
+
+const ADMIN_ONLY_NAV_ITEMS: NavItem[] = [
   { to: '/topics', label: 'Topic Bank' },
   { to: '/settings', label: 'Settings' },
+  { to: '/family', label: 'Family' },
 ];
 
 export default function Shell() {
   const isAdmin = useAuthStore((s) => s.profile?.is_admin ?? false);
   const displayName = useAuthStore((s) => s.profile?.display_name);
-  const navItems = isAdmin ? [...NAV_ITEMS, { to: '/family', label: 'Family' }] : NAV_ITEMS;
+  const signOut = useAuthStore((s) => s.signOut);
+  const navItems = isAdmin ? [...BASE_NAV_ITEMS, ...ADMIN_ONLY_NAV_ITEMS] : BASE_NAV_ITEMS;
 
   return (
     <div className="min-h-screen text-zinc-100">
@@ -48,6 +55,13 @@ export default function Shell() {
                 {displayName}
               </span>
             )}
+            <button
+              onClick={() => signOut()}
+              className="ml-1 whitespace-nowrap rounded-full px-3 py-1.5 text-zinc-500 transition-colors hover:bg-zinc-800/60 hover:text-rose-300"
+              title="Sign out"
+            >
+              Sign out
+            </button>
           </nav>
         </div>
       </header>

@@ -769,6 +769,30 @@ const BOOKS = cat('Books', [
   ['What book from your childhood shaped who you are today?', 1, 'opinion'],
 ]);
 
+const ART = cat('Art', [
+  ['What makes a painting a masterpiece rather than just a nice picture?', 3, 'abstract'],
+  ['Why did the Mona Lisa become the most famous painting in the world?', 2, 'knowledge'],
+  ['Is street art vandalism or a legitimate art form?', 2, 'opinion'],
+  ['What made the Impressionists so controversial when they first exhibited?', 3, 'knowledge'],
+  ['Can art created by artificial intelligence ever be called truly creative?', 3, 'opinion'],
+  ['Why do abstract paintings sell for millions when a child could draw something similar?', 3, 'opinion'],
+  ['What role did the Mughal miniature painters play in Indian art history?', 3, 'knowledge'],
+  ['Why does Van Gogh’s work only become celebrated after his death?', 2, 'knowledge'],
+  ['Is it more impressive to master realism or to invent a new style?', 3, 'opinion'],
+  ['What can a nation’s folk art tell us about its everyday life?', 2, 'knowledge'],
+  ['Should museums return looted art to the countries it was taken from?', 3, 'opinion'],
+  ['What makes Frida Kahlo’s self-portraits so enduringly powerful?', 2, 'opinion'],
+  ['Why do some societies fund art generously while others treat it as a luxury?', 3, 'abstract'],
+  ['What is a piece of art that changed how you see something ordinary?', 1, 'opinion'],
+  ['Why does graffiti sometimes become priceless once an artist becomes famous?', 2, 'abstract'],
+  ['What makes Indian classical dance forms like Bharatanatyam an art and a discipline at once?', 2, 'knowledge'],
+  ['Is a photograph as much a work of art as a painting?', 2, 'opinion'],
+  ['Why did the Renaissance produce so many artistic geniuses in such a short span?', 3, 'knowledge'],
+  ['What is the value of art that makes people uncomfortable rather than pleased?', 3, 'abstract'],
+  ['If you could own one famous artwork, which would you choose and why?', 1, 'opinion'],
+  ['Why do forgeries sometimes fool experts for decades before being discovered?', 2, 'knowledge'],
+], 'Visual Arts');
+
 const SPORTS = cat('Sports', [
   ['What can sports teach us about handling failure?', 2, 'opinion'],
   ['Why does an underdog victory captivate people more than an expected win?', 2, 'abstract'],
@@ -1209,6 +1233,7 @@ export const TOPIC_BANK: RawTopic[] = [
   ...FAMOUS_BUILDINGS,
   ...FAMOUS_PERSONALITIES,
   ...BOOKS,
+  ...ART,
   ...SPORTS,
   ...CRICKET,
   ...ENVIRONMENT,

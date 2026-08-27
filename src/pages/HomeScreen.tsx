@@ -9,14 +9,21 @@ import { Card, PrimaryButton, SecondaryButton, StatTile } from '../components/ui
 
 function PrivacyBanner() {
   const privacyAcknowledged = useAuthStore((s) => s.profile?.privacy_acknowledged ?? false);
+  const isAdmin = useAuthStore((s) => s.profile?.is_admin ?? false);
   const updateProfile = useAuthStore((s) => s.updateProfile);
   if (privacyAcknowledged) return null;
   return (
     <Card className="border-violet-500/30 bg-violet-500/5">
       <p className="text-sm text-zinc-300">
         Speak60 records audio only when you press Start Speaking. Recordings stay on this device; transcripts
-        and scores sync to your family's shared account — see{' '}
-        <Link to="/settings" className="text-violet-300 underline">Settings</Link> to review or delete your data.
+        and scores sync to your family's shared account
+        {isAdmin ? (
+          <>
+            {' '}— see <Link to="/settings" className="text-violet-300 underline">Settings</Link> to review or delete your data.
+          </>
+        ) : (
+          '. Contact your family admin if you\'d like any of your data reviewed or removed.'
+        )}
       </p>
       <button
         onClick={() => updateProfile({ privacy_acknowledged: true })}

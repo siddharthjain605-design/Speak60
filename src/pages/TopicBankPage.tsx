@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from 'react';
 import { useStore } from '../store';
+import { useAuthStore } from '../authStore';
 import { getAllTopics, DIFFICULTY_LABELS } from '../lib/topicEngine';
 import { CATEGORIES, type Difficulty, type TopicType } from '../data/topics';
 import type { RawTopic } from '../types';
@@ -33,6 +34,7 @@ function parseCsv(text: string): RawTopic[] {
 }
 
 export default function TopicBankPage() {
+  const isAdmin = useAuthStore((s) => s.profile?.is_admin ?? false);
   const store = useStore();
   const allTopics = useMemo(() => getAllTopics(store), [store]);
   const [categoryFilter, setCategoryFilter] = useState('All');
@@ -41,6 +43,10 @@ export default function TopicBankPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [form, setForm] = useState({ text: '', category: CATEGORIES[0], subcategory: 'General', difficulty: 2 as Difficulty, type: 'opinion' as TopicType });
+
+  if (!isAdmin) {
+    return <div className="py-16 text-center text-zinc-500">This page is only visible to the family account administrator.</div>;
+  }
 
   const filtered = allTopics.filter((t) => {
     if (categoryFilter !== 'All' && t.category !== categoryFilter) return false;
